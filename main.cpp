@@ -37,9 +37,9 @@ void save();
 void retrive();
 void firstSave(int);
 bool hasrun();
-// bool login();
+bool login();
 //int homeAdmin();
-//void home();
+void home();
 void inputFail();
 void reset();
 
@@ -73,11 +73,11 @@ int main() {
 	bool accountToken = false;
 
 	while (accountToken == false) {
-		accountToken = bankaccounts[activeAccount].login();
+		accountToken = login();
 	}
 
 	if (activeAccount != 0) {
-		bankaccounts[activeAccount].home();
+		home();
 		return(0); 
 	}
 // Everything past this point is accessible to the Admin account only
@@ -87,7 +87,7 @@ int main() {
 	{
 	case 1:
     long double temp;
-	  std::cout << std::endl << std::endl << "How much money do you want to subtract from " << bankaccounts[activeAccount].getName() << "'s account : $";
+	  std::cout << std::endl << std::endl << "How much money do you want to add to " << bankaccounts[activeAccount].getName() << "'s account : $";
   	std::cin >> temp;
 		bankaccounts[activeAccount].addMoney(temp);
 		break;
@@ -279,3 +279,36 @@ void reset() {
 		cout << endl << "Reset complete, please restart program";
 	}
 };
+
+// Function to determine which account's data will be able to be modified
+bool login() {
+  bool authorized = false;
+	int temp_pin;
+	int temp_activeAccount;
+	std::cout << std::endl << std::endl << "Enter the account number : ";
+	std::cin >> temp_activeAccount;
+	if (std::cin.fail()) {
+		inputFail();
+		login();
+	}
+	std::cout << std::endl << "Enter your PIN : ";
+	std::cin >> temp_pin;
+	if (temp_pin == bankaccounts[temp_activeAccount].getPin()) {
+		std::cout << std::endl << "PIN accepted";
+		authorized = true;
+    activeAccount = temp_activeAccount;
+		
+	}
+	else {
+		std::cout << std::endl << "Incorrect PIN";
+	}
+  return(authorized);
+}
+
+// User home screen
+void home() {
+	std::string exit;
+	std::cout << std::endl << std::endl << "Hello " << bankaccounts[activeAccount].getName() << " the current account balence for your account is : $" << bankaccounts[activeAccount].getBal() << std::endl;
+	std::cout << std::endl << "Enter anything to close the program" << std::endl;
+	std::cin >> exit;
+}
