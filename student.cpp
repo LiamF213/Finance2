@@ -49,7 +49,7 @@ void student::addMoney(double long moneyIn) {
 
 // Function to subtract money
 void student::subtractMoney(long double moneyIn) {
-	bal += moneyIn;
+	bal -= moneyIn;
 	std::cout << std::endl << "The new balance in " <<student:: name << "'s account is : $" << bal;
 }
 

@@ -82,20 +82,24 @@ int main() {
 	}
 // Everything past this point is accessible to the Admin account only
 	int operation = bankaccounts[activeAccount].homeAdmin();
-
+  long double temp;
+  int activeAccount_temp;
 	switch (operation)
 	{
 	case 1:
-    long double temp;
-	  std::cout << std::endl << std::endl << "How much money do you want to add to " << bankaccounts[activeAccount].getName() << "'s account : $";
+    std::cout << std::endl << "Enter the account number for the account you want to modify: ";
+    std::cin >> activeAccount_temp;
+	  std::cout << std::endl << std::endl << "How much money do you want to add to " << bankaccounts[activeAccount_temp].getName() << "'s account : $";
   	std::cin >> temp;
-		bankaccounts[activeAccount].addMoney(temp);
+		bankaccounts[activeAccount_temp].addMoney(temp);
 		break;
 
 	case 2:
-	  std::cout << std::endl << std::endl << "How much money do you want to subtract from " << bankaccounts[activeAccount].getName() << "'s account : $";
+    std::cout << std::endl << "Enter the account number for the account you want to modify: ";
+    std::cin >> activeAccount_temp;
+	  std::cout << std::endl << std::endl << "How much money do you want to subtract from " << bankaccounts[activeAccount_temp].getName() << "'s account : $";
   	std::cin >> temp;
-	  bankaccounts[activeAccount].subtractMoney(temp);
+	  bankaccounts[activeAccount_temp].subtractMoney(temp);
 		break;
 	
 	case 3:
