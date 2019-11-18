@@ -27,16 +27,6 @@ using namespace std;
 
 // Custom defines
 #define infinity (8.5 * pow(10, 307));
-
-
-// Data Structures
-
-// Data structure used to hold the name and balance of each student
-struct student {
-	string name;
-	long double bal;
-	int pin;
-};
  
 // Prototype Functions
 void startbank();
@@ -48,8 +38,8 @@ void retrive();
 void firstSave(int);
 bool hasrun();
 // bool login();
-int homeAdmin();
-void home();
+//int homeAdmin();
+//void home();
 void inputFail();
 void reset();
 
@@ -83,24 +73,29 @@ int main() {
 	bool accountToken = false;
 
 	while (accountToken == false) {
-		accountToken = login();
+		accountToken = bankaccounts[activeAccount].login();
 	}
 
 	if (activeAccount != 0) {
-		home();
+		bankaccounts[activeAccount].home();
 		return(0); 
 	}
 // Everything past this point is accessible to the Admin account only
-	int operation = homeAdmin();
+	int operation = bankaccounts[activeAccount].homeAdmin();
 
 	switch (operation)
 	{
 	case 1:
-		addmoney();
+    long double temp;
+	  std::cout << std::endl << std::endl << "How much money do you want to subtract from " << bankaccounts[activeAccount].getName() << "'s account : $";
+  	std::cin >> temp;
+		bankaccounts[activeAccount].addMoney(temp);
 		break;
 
 	case 2:
-		subtractmoney();
+	  std::cout << std::endl << std::endl << "How much money do you want to subtract from " << bankaccounts[activeAccount].getName() << "'s account : $";
+  	std::cin >> temp;
+	  bankaccounts[activeAccount].subtractMoney(temp);
 		break;
 	
 	case 3:
@@ -121,39 +116,48 @@ void startbank() {
 		startbank();
 	}
 
+
 	// For loop to inatilize the bankaccounts vector
 	int x;
 	for (int c = 0; c < limit; c++) {
 		student tempstudent;
 		if (c == 0) {
 			cout << endl << endl << "Enter the administrator account name : ";
-			cin >> tempstudent.name;
+      std::string mayflyName;
+			cin >> mayflyName;
+      tempstudent.setName(mayflyName);
 			cout << endl << "Enter the administrator PIN: ";
-			cin >> tempstudent.pin;
-			tempstudent.bal = infinity;
+      int mayflyPin;
+			cin >> mayflyPin;
+       tempstudent.setPin(mayflyPin);
+			tempstudent.setBal((8.5 * pow(10, 307)));
 			bankaccounts.push_back(tempstudent);
 		}
 		else {
 			cout << endl << endl << "Enter student " << (c) << "'s name : ";
-			cin >> tempstudent.name;
-			cout << endl << "Enter " << tempstudent.name << "'s starting account balance: $";
-			string tempBal;
-			getline(cin, tempBal);
+      std::string tempName;
+			cin >> tempName;
+      tempstudent.setName(tempName);
+			cout << endl << "Enter " << tempstudent.getName() << "'s starting account balance: $";
+			std::string tempBal;
+			std::getline(std::cin, tempBal);
 			while (true)
 			{
-				getline(cin, tempBal);
-				stringstream tempBal2(tempBal);
-				if ((tempBal2 >> tempstudent.bal)) {
+				std::getline(std::cin, tempBal);
+				long double tempBal2 =std::stold(tempBal);
+				if ((tempstudent.setBal(tempBal2))) {
 					break;
 				}
 				inputFail();
-				cout << endl << "Enter " << tempstudent.name << "'s starting account balance: $";
+				cout << endl << "Enter " << tempstudent.getName() << "'s starting account balance: $";
 
 			}
-			cout << endl << "Enter " << tempstudent.name << "'s PIN: ";
-			cin >> tempstudent.pin;
+			cout << endl << "Enter " << tempstudent.getName() << "'s PIN: ";
+      int tempPin;
+			cin >> tempPin;
+      tempstudent.setPin(tempPin);
 			bankaccounts.push_back(tempstudent);
-			cout << endl << tempstudent.name << "'s account number is : " << c;
+			cout << endl << tempstudent.getName() << "'s account number is : " << c;
 		}
 		x = c+1;
 		
@@ -198,9 +202,9 @@ void setflag1() {
 void firstSave(int limit) {
 	for (int c = 0; c < limit; c++) {
 		string accBal, accName, accPIN;
-		accBal = to_string(bankaccounts[c].bal) + ' ';
-		accName = bankaccounts[c].name + ' ';
-		accPIN = to_string(bankaccounts[c].pin) + ' ';
+		accBal = to_string(bankaccounts[c].getBal()) + ' ';
+		accName = bankaccounts[c].getName() + ' ';
+		accPIN = to_string(bankaccounts[c].getPin()) + ' ';
 		accountBalencesFile << accBal;
 		accountNamesFile << accName;
 		accountPINsFile << accPIN;
@@ -226,9 +230,9 @@ void save() {
     string accPIN;
     stringstream bal;
     stringstream pin;
-		accBal = to_string(bankaccounts[c].bal) + ' ';
-		accName = bankaccounts[c].name + ' ';
-		accPIN = to_string(bankaccounts[c].pin) + ' ';
+		accBal = to_string(bankaccounts[c].getBal()) + ' ';
+		accName = bankaccounts[c].getName() + ' ';
+		accPIN = to_string(bankaccounts[c].getPin()) + ' ';
 		accountBalencesFile << accBal;
 		accountNamesFile << accName;
 		accountPINsFile << accPIN;
@@ -242,46 +246,19 @@ void retrive() {
 	numberofAccountsFile >> limit;
 	for (int c = 0; c < limit; c++) {;
 		student temp;
-		accountBalencesFile >> temp.bal;
-		accountNamesFile >> temp.name;
-		accountPINsFile >> temp.pin;
+    double long tempBal;
+    std::string tempName;
+    int tempPin;
+		accountBalencesFile >> tempBal ;
+		accountNamesFile >> tempName;
+		accountPINsFile >> tempPin;
+    temp.setBal(tempBal);
+    temp.setName(tempName);
+    temp.setPin(tempPin);
 		bankaccounts.push_back(temp);
 	}
 }
 
-
-// Admin home screen
-int homeAdmin() {  
-	cout << endl <<"Hello " << bankaccounts[activeAccount].name <<  " what do you want to do. Options are " << endl << "Deposit" << endl << "Withdraw" << endl << "Reset" << endl;
-	string operationStr;
-	cin >> operationStr;
-
-	int operation;
-
-	if (operationStr == "Deposit" || operationStr == "deposit") {
-		operation = 1;
-	}
-	else if (operationStr == "Withdraw" || operationStr == "withdraw") {
-		operation = 2;
-	}
-	else if (operationStr == "Reset" || operationStr == "reset") {
-		operation = 3;
-	}
-	else {
-		cout << endl << "Invalid operation";
-		homeAdmin();
-	}
-	return(operation);
-}
-
-
-// User home screen
-void home() {
-	string exit;
-	cout << endl << endl << "Hello " << bankaccounts[activeAccount].name << " the current account balence for your account is : $" << bankaccounts[activeAccount].bal << endl;
-	cout << endl << "Enter anything to close the program" << endl;
-	cin >> exit;
-}
 
 // Function for when the input verifacation fails
 void inputFail() {
