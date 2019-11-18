@@ -40,17 +40,21 @@ int student::getPin(){
 }
 
 
-
+std::string x;
 // Function to add money to an account
 void student::addMoney(double long moneyIn) {
 	bal += moneyIn;
-	std::cout << std::endl << "The new balance in " <<student:: name << "'s account is : $" << bal;
+  std::cout << std::endl << "The new balance in " <<student:: name << "'s account is : $" << bal;
+  std::cout << std::endl << "enter anything to exit"; 
+  std::cin >> x;
 }
 
 // Function to subtract money
 void student::subtractMoney(long double moneyIn) {
 	bal -= moneyIn;
 	std::cout << std::endl << "The new balance in " <<student:: name << "'s account is : $" << bal;
+  std::cout << std::endl << "enter anything to exit"; 
+  std::cin >> x;
 }
 
 

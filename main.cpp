@@ -1,4 +1,4 @@
-* To-do list
+/* To-do list
 	Add support for two party payment
 	Input verification
 	Add support for interest
@@ -143,7 +143,7 @@ void startbank() {
 			while (true)
 			{
 				std::getline(std::cin, tempBal);
-				long double tempBal2 =std::stold(tempBal);
+				long double tempBal2 = std::stold(tempBal);
 				if ((tempstudent.setBal(tempBal2))) {
 					break;
 				}
