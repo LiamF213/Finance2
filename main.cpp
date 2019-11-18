@@ -20,25 +20,33 @@
 #include <limits>
 #include <regex>
 
-#include "student.h"
-
 
 using namespace std;
 
 // Custom defines
 #define infinity (8.5 * pow(10, 307));
+
+
+// Data Structures
+
+// Data structure used to hold the name and balance of each student
+struct student {
+	string name;
+	long double bal;
+	int pin;
+};
  
 // Prototype Functions
 void startbank();
-//void addmoney();
-//void subtractmoney();
+void addmoney();
+void subtractmoney();
 void setflag1();
 void save();
 void retrive();
 void firstSave(int);
 bool hasrun();
 bool login();
-//int homeAdmin();
+int homeAdmin();
 void home();
 void inputFail();
 void reset();
@@ -81,25 +89,16 @@ int main() {
 		return(0); 
 	}
 // Everything past this point is accessible to the Admin account only
-	int operation = bankaccounts[activeAccount].homeAdmin();
-  long double temp;
-  int activeAccount_temp;
+	int operation = homeAdmin();
+
 	switch (operation)
 	{
 	case 1:
-    std::cout << std::endl << "Enter the account number for the account you want to modify: ";
-    std::cin >> activeAccount_temp;
-	  std::cout << std::endl << std::endl << "How much money do you want to add to " << bankaccounts[activeAccount_temp].getName() << "'s account : $";
-  	std::cin >> temp;
-		bankaccounts[activeAccount_temp].addMoney(temp);
+		addmoney();
 		break;
 
 	case 2:
-    std::cout << std::endl << "Enter the account number for the account you want to modify: ";
-    std::cin >> activeAccount_temp;
-	  std::cout << std::endl << std::endl << "How much money do you want to subtract from " << bankaccounts[activeAccount_temp].getName() << "'s account : $";
-  	std::cin >> temp;
-	  bankaccounts[activeAccount_temp].subtractMoney(temp);
+		subtractmoney();
 		break;
 	
 	case 3:
@@ -120,48 +119,39 @@ void startbank() {
 		startbank();
 	}
 
-
 	// For loop to inatilize the bankaccounts vector
 	int x;
 	for (int c = 0; c < limit; c++) {
 		student tempstudent;
 		if (c == 0) {
 			cout << endl << endl << "Enter the administrator account name : ";
-      std::string mayflyName;
-			cin >> mayflyName;
-      tempstudent.setName(mayflyName);
+			cin >> tempstudent.name;
 			cout << endl << "Enter the administrator PIN: ";
-      int mayflyPin;
-			cin >> mayflyPin;
-       tempstudent.setPin(mayflyPin);
-			tempstudent.setBal((8.5 * pow(10, 307)));
+			cin >> tempstudent.pin;
+			tempstudent.bal = infinity;
 			bankaccounts.push_back(tempstudent);
 		}
 		else {
 			cout << endl << endl << "Enter student " << (c) << "'s name : ";
-      std::string tempName;
-			cin >> tempName;
-      tempstudent.setName(tempName);
-			cout << endl << "Enter " << tempstudent.getName() << "'s starting account balance: $";
-			std::string tempBal;
-			std::getline(std::cin, tempBal);
+			cin >> tempstudent.name;
+			cout << endl << "Enter " << tempstudent.name << "'s starting account balance: $";
+			string tempBal;
+			getline(cin, tempBal);
 			while (true)
 			{
-				std::getline(std::cin, tempBal);
-				long double tempBal2 =std::stold(tempBal);
-				if ((tempstudent.setBal(tempBal2))) {
+				getline(cin, tempBal);
+				stringstream tempBal2(tempBal);
+				if ((tempBal2 >> tempstudent.bal)) {
 					break;
 				}
 				inputFail();
-				cout << endl << "Enter " << tempstudent.getName() << "'s starting account balance: $";
+				cout << endl << "Enter " << tempstudent.name << "'s starting account balance: $";
 
 			}
-			cout << endl << "Enter " << tempstudent.getName() << "'s PIN: ";
-      int tempPin;
-			cin >> tempPin;
-      tempstudent.setPin(tempPin);
+			cout << endl << "Enter " << tempstudent.name << "'s PIN: ";
+			cin >> tempstudent.pin;
 			bankaccounts.push_back(tempstudent);
-			cout << endl << tempstudent.getName() << "'s account number is : " << c;
+			cout << endl << tempstudent.name << "'s account number is : " << c;
 		}
 		x = c+1;
 		
@@ -170,12 +160,54 @@ void startbank() {
 	firstSave(x);
 };
 
+// Function to determine which account's data will be able to be modified
+bool login() {
+	int temp_pin;
+	int temp_activeAccount;
+	cout << endl << endl << "Enter the account number : ";
+	cin >> temp_activeAccount;
+	if (cin.fail()) {
+		inputFail();
+		login();
+	}
+	cout << endl << "Enter your PIN : ";
+	cin >> temp_pin;
+	if (temp_pin == bankaccounts[temp_activeAccount].pin) {
+		cout << endl << "PIN accepted";
+		activeAccount = temp_activeAccount;
+		return(true);
+		
+	}
+	else {
+		cout << endl << "Incorrect PIN";
+		return(false);
+	}
+}
+
+// Function to add money to an account
+void addmoney() {
+	long double temp;
+	int accountToken;
+	cout << endl << endl << "Enter the account number for the account you want to modify :";
+	cin >> accountToken;
+	cout << endl << endl << "How much money do you want to add to " << bankaccounts[accountToken].name << "'s account : $";
+	cin >> temp;
+	bankaccounts[accountToken].bal = (bankaccounts[accountToken].bal + temp);
+	cout << endl << "The new balance in " << bankaccounts[accountToken].name << "'s account is : $" << bankaccounts[accountToken].bal;
+}
 
 
-
-
-
-
+// Function to subtract money
+void subtractmoney() {
+	long double temp;
+	int accountToken;
+	cout << endl << endl << "Enter the account number for the account you want to modify :";
+	cin >> accountToken;
+	cout << endl << endl << "How much money do you want to subtract from " << bankaccounts[accountToken].name << "'s account : $";
+	cin >> temp;
+	bankaccounts[accountToken].bal = (bankaccounts[accountToken].bal - temp);
+	cout << endl << "The new balance in " << bankaccounts[accountToken].name << "'s account is : $" << bankaccounts[accountToken].bal;
+}
 
 
 // Function to determine if this is the first time something the program is run
@@ -206,9 +238,9 @@ void setflag1() {
 void firstSave(int limit) {
 	for (int c = 0; c < limit; c++) {
 		string accBal, accName, accPIN;
-		accBal = to_string(bankaccounts[c].getBal()) + ' ';
-		accName = bankaccounts[c].getName() + ' ';
-		accPIN = to_string(bankaccounts[c].getPin()) + ' ';
+		accBal = to_string(bankaccounts[c].bal) + ' ';
+		accName = bankaccounts[c].name + ' ';
+		accPIN = to_string(bankaccounts[c].pin) + ' ';
 		accountBalencesFile << accBal;
 		accountNamesFile << accName;
 		accountPINsFile << accPIN;
@@ -234,9 +266,9 @@ void save() {
     string accPIN;
     stringstream bal;
     stringstream pin;
-		accBal = to_string(bankaccounts[c].getBal()) + ' ';
-		accName = bankaccounts[c].getName() + ' ';
-		accPIN = to_string(bankaccounts[c].getPin()) + ' ';
+		accBal = to_string(bankaccounts[c].bal) + ' ';
+		accName = bankaccounts[c].name + ' ';
+		accPIN = to_string(bankaccounts[c].pin) + ' ';
 		accountBalencesFile << accBal;
 		accountNamesFile << accName;
 		accountPINsFile << accPIN;
@@ -250,19 +282,46 @@ void retrive() {
 	numberofAccountsFile >> limit;
 	for (int c = 0; c < limit; c++) {;
 		student temp;
-    double long tempBal;
-    std::string tempName;
-    int tempPin;
-		accountBalencesFile >> tempBal ;
-		accountNamesFile >> tempName;
-		accountPINsFile >> tempPin;
-    temp.setBal(tempBal);
-    temp.setName(tempName);
-    temp.setPin(tempPin);
+		accountBalencesFile >> temp.bal;
+		accountNamesFile >> temp.name;
+		accountPINsFile >> temp.pin;
 		bankaccounts.push_back(temp);
 	}
 }
 
+
+// Admin home screen
+int homeAdmin() {  
+	cout << endl <<"Hello " << bankaccounts[activeAccount].name <<  " what do you want to do. Options are " << endl << "Deposit" << endl << "Withdraw" << endl << "Reset" << endl;
+	string operationStr;
+	cin >> operationStr;
+
+	int operation;
+
+	if (operationStr == "Deposit" || operationStr == "deposit") {
+		operation = 1;
+	}
+	else if (operationStr == "Withdraw" || operationStr == "withdraw") {
+		operation = 2;
+	}
+	else if (operationStr == "Reset" || operationStr == "reset") {
+		operation = 3;
+	}
+	else {
+		cout << endl << "Invalid operation";
+		homeAdmin();
+	}
+	return(operation);
+}
+
+
+// User home screen
+void home() {
+	string exit;
+	cout << endl << endl << "Hello " << bankaccounts[activeAccount].name << " the current account balence for your account is : $" << bankaccounts[activeAccount].bal << endl;
+	cout << endl << "Enter anything to close the program" << endl;
+	cin >> exit;
+}
 
 // Function for when the input verifacation fails
 void inputFail() {
@@ -283,36 +342,3 @@ void reset() {
 		cout << endl << "Reset complete, please restart program";
 	}
 };
-
-// Function to determine which account's data will be able to be modified
-bool login() {
-  bool authorized = false;
-	int temp_pin;
-	int temp_activeAccount;
-	std::cout << std::endl << std::endl << "Enter the account number : ";
-	std::cin >> temp_activeAccount;
-	if (std::cin.fail()) {
-		inputFail();
-		login();
-	}
-	std::cout << std::endl << "Enter your PIN : ";
-	std::cin >> temp_pin;
-	if (temp_pin == bankaccounts[temp_activeAccount].getPin()) {
-		std::cout << std::endl << "PIN accepted";
-		authorized = true;
-    activeAccount = temp_activeAccount;
-		
-	}
-	else {
-		std::cout << std::endl << "Incorrect PIN";
-	}
-  return(authorized);
-}
-
-// User home screen
-void home() {
-	std::string exit;
-	std::cout << std::endl << std::endl << "Hello " << bankaccounts[activeAccount].getName() << " the current account balence for your account is : $" << bankaccounts[activeAccount].getBal() << std::endl;
-	std::cout << std::endl << "Enter anything to close the program" << std::endl;
-	std::cin >> exit;
-}
