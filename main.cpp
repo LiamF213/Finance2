@@ -20,6 +20,8 @@
 #include <limits>
 #include <regex>
 
+#include "student.h"
+
 
 using namespace std;
 
@@ -38,14 +40,14 @@ struct student {
  
 // Prototype Functions
 void startbank();
-void addmoney();
-void subtractmoney();
+//void addmoney();
+//void subtractmoney();
 void setflag1();
 void save();
 void retrive();
 void firstSave(int);
 bool hasrun();
-bool login();
+// bool login();
 int homeAdmin();
 void home();
 void inputFail();
@@ -160,54 +162,12 @@ void startbank() {
 	firstSave(x);
 };
 
-// Function to determine which account's data will be able to be modified
-bool login() {
-	int temp_pin;
-	int temp_activeAccount;
-	cout << endl << endl << "Enter the account number : ";
-	cin >> temp_activeAccount;
-	if (cin.fail()) {
-		inputFail();
-		login();
-	}
-	cout << endl << "Enter your PIN : ";
-	cin >> temp_pin;
-	if (temp_pin == bankaccounts[temp_activeAccount].pin) {
-		cout << endl << "PIN accepted";
-		activeAccount = temp_activeAccount;
-		return(true);
-		
-	}
-	else {
-		cout << endl << "Incorrect PIN";
-		return(false);
-	}
-}
-
-// Function to add money to an account
-void addmoney() {
-	long double temp;
-	int accountToken;
-	cout << endl << endl << "Enter the account number for the account you want to modify :";
-	cin >> accountToken;
-	cout << endl << endl << "How much money do you want to add to " << bankaccounts[accountToken].name << "'s account : $";
-	cin >> temp;
-	bankaccounts[accountToken].bal = (bankaccounts[accountToken].bal + temp);
-	cout << endl << "The new balance in " << bankaccounts[accountToken].name << "'s account is : $" << bankaccounts[accountToken].bal;
-}
 
 
-// Function to subtract money
-void subtractmoney() {
-	long double temp;
-	int accountToken;
-	cout << endl << endl << "Enter the account number for the account you want to modify :";
-	cin >> accountToken;
-	cout << endl << endl << "How much money do you want to subtract from " << bankaccounts[accountToken].name << "'s account : $";
-	cin >> temp;
-	bankaccounts[accountToken].bal = (bankaccounts[accountToken].bal - temp);
-	cout << endl << "The new balance in " << bankaccounts[accountToken].name << "'s account is : $" << bankaccounts[accountToken].bal;
-}
+
+
+
+
 
 
 // Function to determine if this is the first time something the program is run
